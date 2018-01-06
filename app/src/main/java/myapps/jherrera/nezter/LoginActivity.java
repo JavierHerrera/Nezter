@@ -41,18 +41,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.btn_login:
 
+                name = String.valueOf(etName.getText());
+                password = String.valueOf(etPassword.getText());
+
                 try {
-                    usuariosHelper.openDB();
-                    if (usuariosHelper.login(name,password)) {
-                        usuariosHelper.closeDB();
+                    if (usuariosHelper.checkUser(name,password)) {
                         Intent intent = new Intent(this, ConfiguracionActivity.class);
                         startActivity(intent);
+                    }else{
+                        Toast.makeText(this,"Usuario o password incorrecto",Toast.LENGTH_LONG ).show();
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(this,"Usuario o password incorrecto",Toast.LENGTH_LONG ).show();
-
                 }
                 break;
 

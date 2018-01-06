@@ -1,12 +1,12 @@
 package myapps.jherrera.nezter.database;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import static java.lang.Integer.parseInt;
 
@@ -64,11 +64,14 @@ public class DbProductosHelper extends SQLiteOpenHelper {
 
     //Metodos para manipular los datos
     public long addProduct(String name, int stock) throws Exception{
-
+        openDB();
         ContentValues values = new ContentValues();
         values.put(NAME,name);
         values.put(STOCK,stock);
-        return db.insert(TABLE_NAME,null,values);
+        long res = db.insert(TABLE_NAME,null,values);
+        closeDB();
+
+        return res;
     }
 
     public String getNameLowStock(){
@@ -143,54 +146,95 @@ public class DbProductosHelper extends SQLiteOpenHelper {
 
     public void drecement(String id){
         openDB();
-        Cursor cursor = db.rawQuery("select * from "+TABLE_NAME+" where " + ID + " = " + id,null);
-        cursor.moveToFirst();
-        int stock = Integer.parseInt(cursor.getString(2))-1;
-        closeDB();
 
-        if (stock <0){
-            stock = 0;
+        if (checkProductExist(id)) {
+
+            Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + ID + " = " + id, null);
+            cursor.moveToFirst();
+            int stock = Integer.parseInt(cursor.getString(2)) - 1;
+            closeDB();
+
+            if (stock < 0) {
+                stock = 0;
+            }
+            updateStock(id, stock);
         }
-         updateStock(id,stock);
+
         closeDB();
     }
 
     public void increment(String id){
         openDB();
-        Cursor cursor = db.rawQuery("select * from "+TABLE_NAME+" where " + ID + " = " + id,null);
-        cursor.moveToFirst();
-        int stock = Integer.parseInt(cursor.getString(2))+1;
-        updateStock(id,stock);
-        closeDB();
+
+        if (checkProductExist(id)) {
+
+            Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + ID + " = " + id, null);
+            cursor.moveToFirst();
+            int stock = Integer.parseInt(cursor.getString(2)) + 1;
+            updateStock(id, stock);
+            closeDB();
+        }
     }
 
     public boolean updateActive(String id){
         openDB();
 
-        Cursor cursor = db.rawQuery("select * from "+TABLE_NAME+" where " + ID + " = " + id,null);
+        if (checkProductExist(id)) {
+            Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + ID + " = " + id, null);
 
-        cursor.moveToFirst();
-        int activo = parseInt(cursor.getString(4));
-        if (activo == 0){
-            activo= 1;
-        }else {activo = 0;}
+            cursor.moveToFirst();
+            int activo = parseInt(cursor.getString(4));
+            if (activo == 0) {
+                activo = 1;
+            } else {
+                activo = 0;
+            }
 
-        ContentValues values = new ContentValues();
-        values.put(FLAG_ACTIVO, String.valueOf(activo));
-        db.update(TABLE_NAME,values, "id = ?" ,new String[]{id});
+            ContentValues values = new ContentValues();
+            values.put(FLAG_ACTIVO, String.valueOf(activo));
+            db.update(TABLE_NAME, values, "id = ?", new String[]{id});
 
-        closeDB();
-        return true;
+            closeDB();
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteProduct(String id){
         openDB();
 
-        ContentValues values = new ContentValues();
-        values.put(FLAG_ELIMINADO,1);
-        db.update(TABLE_NAME,values, "id = ?" ,new String[]{id});
+        if (checkProductExist(id)) {
 
-        closeDB();
-        return true;
+            ContentValues values = new ContentValues();
+            values.put(FLAG_ELIMINADO, 1);
+            db.update(TABLE_NAME, values, "id = ?", new String[]{id});
+
+            closeDB();
+            return true;
+        }
+        return false;
     }
+
+    private boolean checkProductExist(String id) {
+
+        String selection = ID  + " = ?" + " AND " + FLAG_ELIMINADO + " = ?" ;
+        String[] selectionArgs = {id,"0"};
+        Cursor cursor = db.query(TABLE_NAME, //Table to query
+                null,                    //columns to return
+                selection,                  //columns for the WHERE clause
+                selectionArgs,              //The values for the WHERE clause
+                null,                       //group the rows
+                null,                       //filter by row groups
+                null);                      //The sort order
+
+        int cursorCount = cursor.getCount();
+
+        if (cursorCount == 0) {
+            return true;
+
+        }
+        Toast.makeText(context,"EL ID no existe",Toast.LENGTH_LONG ).show();
+        return false;
+    }
+
 }

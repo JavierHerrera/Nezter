@@ -19,6 +19,8 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     Button btnRegister;
     DbUsuariosHelper usuariosHelper = new DbUsuariosHelper(this);
     String name,password, confirmPassword;
+    Usuario usuario;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,25 +45,29 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
         switch(view.getId()) {
 
              case R.id.btn_registrar:
-
                  name = String.valueOf(etName.getText());
                  password = String.valueOf(etPassword.getText());
                  confirmPassword = String.valueOf(etConfimrPassword.getText());
-                 if (validName() && validPassword()) {
-                     usuariosHelper.openDB();
-                     Long result = usuariosHelper.addUser(name,password);
-                     usuariosHelper.closeDB();
+                 Toast.makeText(this,"Registrando...",Toast.LENGTH_SHORT ).show();
 
-                     if (result >0 ) {
-                         Toast.makeText(this,"Usuario registrado con exito",Toast.LENGTH_LONG ).show();
-                         Intent intent = new Intent(this, RegistroActivity.class);
-                         startActivity(intent);
-                     }else {
-                         Toast.makeText(this,"Registro fallido",Toast.LENGTH_LONG ).show();
+                 try {
+                     if (validName() && validPassword()) {
+                         setUser();
+                         Long result = usuariosHelper.addUser(usuario);
+
+                         if (result >0 ) {
+                             Toast.makeText(this,"Usuario registrado con exito",Toast.LENGTH_LONG ).show();
+                             Intent intent = new Intent(this, ConfiguracionActivity.class);
+                             startActivity(intent);
+                         }
                      }
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                     Toast.makeText(this,"Exception error "+e.toString(),Toast.LENGTH_LONG ).show();
                  }
 
-                break;
+
+                 break;
         }
 
     }
@@ -75,11 +81,31 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private boolean validPassword(){
-        boolean valid = (Objects.equals(password, confirmPassword));
 
-        if (!valid){
+        if (!Objects.equals(password, confirmPassword)){
             Toast.makeText(this,"Password no coincide",Toast.LENGTH_LONG ).show();
         }
-        return  valid ;
+        else if(password.length() == 0){
+            Toast.makeText(this,"Password esta en blanco",Toast.LENGTH_LONG ).show();
+
+        }else {
+            return true;
+        }
+        return  false ;
+    }
+
+    private void setUser(){
+        usuario = new Usuario();
+        usuario.setName(name);
+        usuario.setPassword(password);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

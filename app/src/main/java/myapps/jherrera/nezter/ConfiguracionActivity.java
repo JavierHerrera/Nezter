@@ -54,7 +54,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements View.OnC
 
             case R.id.button_add:
 
-                Toast.makeText(this,"Registrando...",Toast.LENGTH_LONG ).show();
+                Toast.makeText(this,"Registrando...",Toast.LENGTH_SHORT ).show();
                 String nombre = String.valueOf(etName.getText());
                 String stock = String.valueOf((etStock.getText()));
 
@@ -64,9 +64,7 @@ public class ConfiguracionActivity extends AppCompatActivity implements View.OnC
                 else {
 
                     try {
-                        dbHelper.openDB();
                         long result = dbHelper.addProduct(nombre, Integer.parseInt(stock));
-                        dbHelper.closeDB();
 
                         if (result > 0) {
                             Toast.makeText(this, "Registro exitoso", Toast.LENGTH_LONG).show();

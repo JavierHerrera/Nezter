@@ -47,7 +47,7 @@ public class MostrarActivity extends AppCompatActivity implements View.OnClickLi
 
     private void alertDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setTitle("Solicitar Productos");
+        builder1.setTitle("Productos por agotarse");
 
         String lowStock = "";
         dbHelper.openDB();
