@@ -8,33 +8,37 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import myapps.jherrera.nezter.objects.Product;
+
 import static java.lang.Integer.parseInt;
 
-public class DbProductosHelper extends SQLiteOpenHelper {
+public class DbProductHelper extends SQLiteOpenHelper {
 
     private static String dbName = "MyPrpductDB";
     private static CursorFactory factory = null;
     private static int version = 2;
 
     //Tabla
-    public static final String TABLE_NAME = "PRODUCTO";
+    private static final String TABLE_NAME = "PRODUCTO";
 
     //Columnas
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String STOCK = "stock";
-    public static final String FLAG_ACTIVO = "activo";
-    public static final String FLAG_ELIMINADO = "eliminado";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String STOCK = "stock";
+    private static final String FLAG_ACTIVO = "activo";
+    private static final String FLAG_ELIMINADO = "eliminado";
 
     //Variables de referencia
-    DbProductosHelper dbHelprer;
+    DbProductHelper dbHelprer;
     SQLiteDatabase db;
     Context context;
 
-    public DbProductosHelper(Context context){
+    public DbProductHelper(Context context){
         super(context, dbName,factory,version);
         this.context = context;
-
     }
 
     @Override
@@ -44,7 +48,7 @@ public class DbProductosHelper extends SQLiteOpenHelper {
                 NAME + " TEXT NOT NULL," +
                 STOCK + " INTEGER DEFAULT 0," +
                 FLAG_ELIMINADO + " INTEGER DEFAULT 0," +
-                FLAG_ACTIVO + " INTEGER DEFAULT 1)");
+                FLAG_ACTIVO + " INTEGER DEFAULT 0)");
     }
 
     @Override
@@ -54,7 +58,7 @@ public class DbProductosHelper extends SQLiteOpenHelper {
     }
 
     public void openDB(){
-        dbHelprer = new DbProductosHelper(context);
+        dbHelprer = new DbProductHelper(context);
         db = dbHelprer.getWritableDatabase();
     }
 
@@ -110,21 +114,24 @@ public class DbProductosHelper extends SQLiteOpenHelper {
         return String.valueOf(data);
     }
 
-    public String selectAll(){
+    public List selectAll(){
 
+        List items = new ArrayList();
+        openDB();
         Cursor res = db.rawQuery("select * from "+TABLE_NAME + " where eliminado = 0",null);
-
-        StringBuilder data = new StringBuilder();
         while (res.moveToNext()) {
 
-            data.append("Id :" + res.getString(0) +
-                    " Nombre :" + res.getString(1) +
-                    " Stock :" + res.getString(2) +
-                    " Activo :" + res.getString(4) + stockBajo(res.getString(2))+"\n");
-
-        }
-        return String.valueOf(data);
+            items.add(new Product(
+                    res.getInt(0),                     // int
+                    res.getString(1),                  //name
+                    res.getInt(2),                     // stock
+                    res.getInt(4) > 0));        // active(boolean)
+            }
+            closeDB();
+        return items;
     }
+
+
 
     private String stockBajo(String s){
 
@@ -176,7 +183,7 @@ public class DbProductosHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateActive(String id){
+    public void updateActive(String id){
         openDB();
 
         if (checkProductExist(id)) {
@@ -195,9 +202,7 @@ public class DbProductosHelper extends SQLiteOpenHelper {
             db.update(TABLE_NAME, values, "id = ?", new String[]{id});
 
             closeDB();
-            return true;
         }
-        return false;
     }
 
     public boolean deleteProduct(String id){
@@ -219,22 +224,22 @@ public class DbProductosHelper extends SQLiteOpenHelper {
 
         String selection = ID  + " = ?" + " AND " + FLAG_ELIMINADO + " = ?" ;
         String[] selectionArgs = {id,"0"};
-        Cursor cursor = db.query(TABLE_NAME, //Table to query
-                null,                    //columns to return
-                selection,                  //columns for the WHERE clause
-                selectionArgs,              //The values for the WHERE clause
-                null,                       //group the rows
-                null,                       //filter by row groups
-                null);                      //The sort order
+        Cursor cursor = db.query(TABLE_NAME, //Nombre de la tabla
+                null,                    //columnas(SELECT)
+                selection,                  //columnas(WHERE)
+                selectionArgs,              //valores de las columnas en (Where)
+                null,                       //group
+                null,                       //ffiltro de group
+                null);                      //order
 
         int cursorCount = cursor.getCount();
 
         if (cursorCount == 0) {
-            return true;
+            Toast.makeText(context,"EL ID no existe",Toast.LENGTH_LONG ).show();
+            return false;
 
         }
-        Toast.makeText(context,"EL ID no existe",Toast.LENGTH_LONG ).show();
-        return false;
+        return true;
     }
 
 }

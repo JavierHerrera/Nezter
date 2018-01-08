@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
-import myapps.jherrera.nezter.Usuario;
+import myapps.jherrera.nezter.objects.User;
 
-public class DbUsuariosHelper extends SQLiteOpenHelper {
+public class DbUserHelper extends SQLiteOpenHelper {
 
     private static String dbName = "MyUsuerDB";
     private static CursorFactory factory = null;
@@ -25,11 +25,11 @@ public class DbUsuariosHelper extends SQLiteOpenHelper {
     public static final String PASSWORD = "password";
 
     //Variables de referencia
-    DbUsuariosHelper dbHelprer;
+    DbUserHelper dbHelprer;
     SQLiteDatabase db;
     Context context;
 
-    public DbUsuariosHelper(Context context){
+    public DbUserHelper(Context context){
         super(context, dbName,factory,version);
         this.context = context;
     }
@@ -49,7 +49,7 @@ public class DbUsuariosHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addUser(Usuario usuario)throws Exception{
+    public long addUser(User usuario)throws Exception{
         openDB();
 
         if (checkUserExist(usuario.getName())) {
@@ -64,7 +64,7 @@ public class DbUsuariosHelper extends SQLiteOpenHelper {
     }
 
     public void openDB(){
-        dbHelprer = new DbUsuariosHelper(context);
+        dbHelprer = new DbUserHelper(context);
         db = dbHelprer.getWritableDatabase();
     }
 

@@ -1,4 +1,4 @@
-package myapps.jherrera.nezter;
+package myapps.jherrera.nezter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,21 +10,24 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-import myapps.jherrera.nezter.database.DbUsuariosHelper;
+import myapps.jherrera.nezter.R;
+import myapps.jherrera.nezter.objects.User;
+import myapps.jherrera.nezter.database.DbUserHelper;
 
 
 public class RegistroActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText etName, etPassword, etConfimrPassword;
     Button btnRegister;
-    DbUsuariosHelper usuariosHelper = new DbUsuariosHelper(this);
+    DbUserHelper usuariosHelper = new DbUserHelper(this);
     String name,password, confirmPassword;
-    Usuario usuario;
+    User usuario;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Registro");
         setContentView(R.layout.activity_registro);
 
         name = "";
@@ -48,7 +51,6 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                  name = String.valueOf(etName.getText());
                  password = String.valueOf(etPassword.getText());
                  confirmPassword = String.valueOf(etConfimrPassword.getText());
-                 Toast.makeText(this,"Registrando...",Toast.LENGTH_SHORT ).show();
 
                  try {
                      if (validName() && validPassword()) {
@@ -56,8 +58,8 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                          Long result = usuariosHelper.addUser(usuario);
 
                          if (result >0 ) {
-                             Toast.makeText(this,"Usuario registrado con exito",Toast.LENGTH_LONG ).show();
-                             Intent intent = new Intent(this, ConfiguracionActivity.class);
+                             Toast.makeText(this,"Registro exitoso",Toast.LENGTH_SHORT ).show();
+                             Intent intent = new Intent(this, MainActivity.class);
                              startActivity(intent);
                          }
                      }
@@ -95,7 +97,7 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setUser(){
-        usuario = new Usuario();
+        usuario = new User();
         usuario.setName(name);
         usuario.setPassword(password);
     }

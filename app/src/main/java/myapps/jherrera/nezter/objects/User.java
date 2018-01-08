@@ -1,10 +1,6 @@
-package myapps.jherrera.nezter;
+package myapps.jherrera.nezter.objects;
 
-/**
- * Created by JH on 05/01/2018.
- */
-
-public class Usuario {
+public class User {
     String name;
     String password;
 

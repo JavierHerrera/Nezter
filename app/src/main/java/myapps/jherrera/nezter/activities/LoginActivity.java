@@ -1,4 +1,4 @@
-package myapps.jherrera.nezter;
+package myapps.jherrera.nezter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,22 +8,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import myapps.jherrera.nezter.database.DbUsuariosHelper;
+import myapps.jherrera.nezter.R;
+import myapps.jherrera.nezter.database.DbUserHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText etName, etPassword;
     Button btnLogin, btnRegister;
-    DbUsuariosHelper usuariosHelper = new DbUsuariosHelper(this);
-    String name,password;
+    DbUserHelper usuariosHelper = new DbUserHelper(this);
+    String name = "";
+    String password = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        name = "";
-        password = "";
+        setTitle("Login");
 
         etName = findViewById(R.id.et_nombre_usuario);
         etPassword = findViewById(R.id.et_password_usuario);
@@ -34,9 +34,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnRegister.setOnClickListener(this);
     }
 
+
     @Override
     public void onClick(View view) {
-
         switch(view.getId()) {
 
             case R.id.btn_login:
@@ -46,10 +46,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 try {
                     if (usuariosHelper.checkUser(name,password)) {
-                        Intent intent = new Intent(this, ConfiguracionActivity.class);
+                        Intent intent = new Intent(this, MainActivity.class);
                         startActivity(intent);
                     }else{
-                        Toast.makeText(this,"Usuario o password incorrecto",Toast.LENGTH_LONG ).show();
+                        Toast.makeText(this,"User o password incorrecto",Toast.LENGTH_LONG ).show();
                     }
 
                 } catch (Exception e) {

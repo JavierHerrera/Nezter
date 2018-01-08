@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
-    tools:context="myapps.jherrera.nezter.ConfiguracionActivity">
+    android:orientation="vertical"
+    tools:context="myapps.jherrera.nezter.activities.ConfiguracionActivity">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp">
 
     <TextView
-        android:id="@+id/tv_nombre_poducto"
+        android:id="@+id/et_nombre_producto"
         android:paddingTop="13dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +23,7 @@
         android:id="@+id/et_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/tv_nombre_poducto"
+        android:layout_toEndOf="@id/et_nombre_producto"
         android:inputType="text" />
 
     <TextView
@@ -45,50 +49,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_stock"
-        android:text="Añadir Producto"/>
+        android:text="Añadir"/>
 
     <Button
-        android:id="@+id/button_show"
+        android:id="@+id/button_goToActivityMostrar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_stock"
-        android:layout_toEndOf="@id/button_add"
+        android:layout_alignParentEnd="true"
         android:text="Mostrar" />
 
+    </RelativeLayout>
 
-    <EditText
-        android:id="@+id/tv_id"
-        android:textSize="20sp"
-        android:layout_marginTop="16dp"
-        android:layout_width="wrap_content"
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/reciclador_configuracion"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ID"
-        android:inputType="numberDecimal"
-        android:layout_below="@id/button_add"/>
-
-
-    <Button
-        android:id="@+id/button_activar_desactivar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_id"
-        android:text="Activar/Desactivar" />
-
-    <Button
-        android:id="@+id/button_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/button_activar_desactivar"
-        android:text="Eliminar"
-        android:layout_alignBaseline="@id/button_activar_desactivar"/>
-
-    <TextView
-        android:id="@+id/tv_result"
-        android:layout_margin="10sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_activar_desactivar"
+        android:layout_margin="0dp"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/button_add"
         />
 
 
-</RelativeLayout>
+</LinearLayout>
